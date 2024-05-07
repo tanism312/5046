@@ -1,18 +1,21 @@
 package com.example.assignemt1
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Call
-import androidx.compose.material.icons.rounded.Email
-import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,18 +23,50 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
+
 val CustomFont = Color(0xDA494848)
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+
 fun Profile(navController: NavHostController) {
-    var text by remember { mutableStateOf(TextFieldValue("")) }
-    Image(
+
+
+    var isEditing by remember { mutableStateOf(false) }
+    var showSnackbar by remember { mutableStateOf(false) }
+    val scaffoldState = rememberScaffoldState()
+
+
+        var isEditingPerson by remember { mutableStateOf(false) }
+        var isEditingGender by remember { mutableStateOf(false) }
+        var isEditingHome by remember { mutableStateOf(false) }
+        var isEditingWeight by remember { mutableStateOf(false) }
+        var isEditingAge by remember { mutableStateOf(false) }
+
+
+        var person by remember { mutableStateOf("Mr. Butch") }
+        var gender by remember { mutableStateOf("Male") }
+        var weight by remember { mutableStateOf("73 Kg") }
+        var age by remember { mutableStateOf("29") }
+
+        var tempPerson by remember { mutableStateOf(person) }
+        var tempGender by remember { mutableStateOf(gender) }
+        var tempWeight by remember { mutableStateOf(weight) }
+        var tempAge by remember { mutableStateOf(age) }
+
+        val genderIcon = painterResource(id = R.drawable.gender)
+        val weightIcon = painterResource(id = R.drawable.weight)
+        val ageIcon = painterResource(id = R.drawable.age)
+
+
+
+        Image(
         painter = painterResource(id = R.drawable.login),
         contentDescription = "Background Image",
         contentScale = ContentScale.Crop,
@@ -41,10 +76,11 @@ fun Profile(navController: NavHostController) {
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
+
     ) {
         Spacer(modifier = Modifier.height(26.dp))
         Image(
-            painter = painterResource(id = R.drawable.butch),
+            painter = painterResource(id = R.drawable.followery),
             contentDescription = "Profile Picture",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -67,83 +103,234 @@ fun Profile(navController: NavHostController) {
             Row (horizontalArrangement  =  Arrangement.SpaceEvenly
             ){
                 Column() {
-                    Text(text = "Posts", modifier = Modifier
+                    Text(text = "Daily Tip", modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 25.dp), color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "327", modifier = Modifier
+                    Text(text = "3", modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(top = 5.dp), color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        .padding(top = 5.dp)
+                        .clickable { navController.navigate(Routes.Details.value) }, color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
 
                 Column() {
                     Text(text = "Followers", modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 25.dp), color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "184", modifier = Modifier
+                    Text(text = "16", modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(top = 5.dp), color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        .padding(top = 5.dp)
+                        .clickable { navController.navigate(Routes.FollowersList.value) }, color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
                 }
                 Column() {
-                    Text(text = "Goals", modifier = Modifier
+                    Text(text = "Target", modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 25.dp), color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     Text(text = "17", modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(top = 5.dp), color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        .padding(top = 5.dp)
+                        .clickable { navController.navigate(Routes.Goals.value) }, color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
                 }
             }
         }
         Spacer(modifier = Modifier.height(26.dp))
+
+
         Column {
-            Row (){
+            Row (horizontalArrangement  =  Arrangement.SpaceEvenly) {
+                    Icon(
+                        Icons.Rounded.Person,
+                        contentDescription = "Back",
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(35.dp),
+                        tint = CustomWhite
+                    )
+                if (!isEditingPerson) {
+                    Text(text = person,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 5.dp),
+                        color = Color.DarkGray,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold)
+                }
+                else {
+                    TextField(
+                        value = tempPerson,
+                        onValueChange = { tempPerson = it },
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 5.dp),
+                        textStyle = TextStyle(color = Color.DarkGray, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    )
+                }
+
                 Icon(
-                    Icons.Rounded.Email,
-                    contentDescription = "Back",
+                    Icons.Rounded.Edit,
+                    contentDescription = "Edit Person",
+                    modifier = Modifier
+                        .padding(15.dp)
+                        .size(25.dp)
+                        .clickable { isEditingPerson = !isEditingPerson },
+                    tint = CustomWhite
+                )
+            }
+
+            }
+
+        Spacer(modifier = Modifier.height(15.dp))
+            Row(horizontalArrangement  =  Arrangement.SpaceEvenly) {
+                Icon(painter = genderIcon,
+                    contentDescription = "Gender",
                     modifier = Modifier
                         .padding(10.dp)
                         .size(35.dp),
                     tint = CustomWhite
                 )
-                Text(text = "hirn8930@gmail.com", modifier = Modifier.align(Alignment.CenterVertically).padding(start = 5.dp), color = Color.DarkGray, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-            }
-            Row {
+
+                if (!isEditingGender) {
+                    Text(text = gender,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 5.dp),
+                        color = Color.DarkGray,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold)
+                } else {
+                    TextField(
+                        value = tempGender,
+                        onValueChange = { tempGender = it },
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 5.dp),
+                        textStyle = TextStyle(color = Color.DarkGray, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    )
+                }
+                Spacer(modifier = Modifier.width(45.dp))
                 Icon(
-                    Icons.Rounded.Call,
-                    contentDescription = "Back",
+                    Icons.Rounded.Edit,
+                    contentDescription = "Edit Gender",
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .size(25.dp)
+                        .clickable { isEditingGender = !isEditingGender },
+                    tint = CustomWhite
+                )
+            }
+        Spacer(modifier = Modifier.height(15.dp))
+            Row(horizontalArrangement  =  Arrangement.SpaceEvenly) {
+                Icon(
+                    painter = ageIcon,
+                    contentDescription = "Edit Age",
                     modifier = Modifier
                         .padding(10.dp)
                         .size(35.dp),
                     tint = CustomWhite
                 )
-                Text(text = "0487983923", modifier = Modifier.align(Alignment.CenterVertically).padding(start = 5.dp), color = Color.DarkGray, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-            }
-            Row {
+
+                if (!isEditingAge) {
+                    Text(text = age,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 5.dp),
+                        color = Color.DarkGray,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold)
+                }
+                else {
+                    TextField(
+                        value = tempAge,
+                        onValueChange = { tempAge = it },
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 5.dp),
+                        textStyle = TextStyle(color = Color.DarkGray, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    )
+                }
+                Spacer(modifier = Modifier.width(65.dp))
                 Icon(
-                    Icons.Rounded.Home,
-                    contentDescription = "Back",
+                    Icons.Rounded.Edit,
+                    contentDescription = "Edit Age",
                     modifier = Modifier
-                        .padding(10.dp)
-                        .size(35.dp),
+                        .padding(10.dp) // Add spacing after the number
+                        .size(25.dp)
+                        .clickable { isEditingAge = !isEditing },
                     tint = CustomWhite
                 )
-                Text(text = "394/32 Blackburn St", modifier = Modifier.align(Alignment.CenterVertically).padding(start = 5.dp), color = Color.DarkGray, fontSize = 15.sp, fontWeight = FontWeight.Bold)
             }
-            Row {
-                Icon(
-                    Icons.Rounded.Person,
-                    contentDescription = "Back",
+        Spacer(modifier = Modifier.height(15.dp))
+        Row(horizontalArrangement  =  Arrangement.SpaceEvenly) {
+            Icon(
+                painter = weightIcon,
+                contentDescription = "Back",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(35.dp),
+                tint = CustomWhite
+            )
+
+            if (!isEditingWeight) {
+                Text(text = weight,
                     modifier = Modifier
-                        .padding(10.dp)
-                        .size(35.dp),
-                    tint = CustomWhite
-                )
-                Text(text = "Other info......", modifier = Modifier.align(Alignment.CenterVertically).padding(start = 5.dp), color = Color.DarkGray, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 5.dp),
+                    color = Color.DarkGray,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold)
             }
+            else {
+                TextField(
+                    value = tempWeight,
+                    onValueChange = { tempWeight = it },
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 5.dp),
+                    textStyle = TextStyle(color = Color.DarkGray, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                )
+            }
+            Spacer(modifier = Modifier.width(35.dp))
+            Icon(
+                Icons.Rounded.Edit,
+                contentDescription = "Edit Weight",
+                modifier = Modifier
+                    .padding(10.dp) // Add spacing after the number
+                    .size(25.dp)
+                    .clickable { isEditingWeight = !isEditing },
+                tint = CustomWhite
+            )
         }
 
 
+        LaunchedEffect(scaffoldState) {
+            if (showSnackbar) {
+                scaffoldState.snackbarHostState.showSnackbar(
+                    message = "Changes Saved Successfully!",
+                    duration = SnackbarDuration.Short
+                )
+                showSnackbar = false
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Button(
+            onClick = {
+                person = tempPerson
+                gender = tempGender
+                age = tempAge
+                weight = tempWeight
+
+                isEditingPerson = false
+                isEditingGender = false
+                isEditingAge = false
+                isEditingWeight = false
+            }
+        )
+        {
+            Text("Save Changes")
+        }
     }
 }
+
+
 

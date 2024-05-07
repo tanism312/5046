@@ -1,10 +1,10 @@
 package com.example.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -12,8 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -24,9 +22,15 @@ import androidx.navigation.compose.rememberNavController
 import com.example.assignemt1.Community
 import com.example.assignemt1.CustomBlack
 import com.example.assignemt1.Dashboard
+import com.example.assignemt1.Details
 import com.example.assignemt1.Profile
 import com.example.assignemt1.Stats
+import com.example.assignemt1.FollowersList
+import com.example.assignemt1.Goals
+import com.example.assignemt1.Routes
 
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BottomNavigationBar() {
     val navController = rememberNavController()
@@ -77,12 +81,16 @@ fun BottomNavigationBar() {
             composable(Routes.Profile.value) {
                 Profile(navController)
             }
+            composable(Routes.FollowersList.value) {
+                FollowersList(navController)
+            }
+            composable(Routes.Goals.value) {
+                Goals(navController)
+            }
+            composable(Routes.Details.value) {
+                Details(navController)
+            }
         }
     }
 }
 
-@Preview(device = "id:pixel_4")
-@Composable
-fun See(){
-    BottomNavigationBar()
-}

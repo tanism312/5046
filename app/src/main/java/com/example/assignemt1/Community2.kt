@@ -1,8 +1,14 @@
 package com.example.assignemt1
 
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,18 +17,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.AccountBox
-import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,25 +44,52 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.InspectableModifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import java.io.InputStream
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material3.AlertDialog
+import androidx.compose.runtime.mutableStateListOf
+
 import androidx.navigation.NavHostController
 
 val ColorTextField = Color(0x4F414141)
+data class UserSubmission(
+    val text: String,
+    val imageUris: List<Uri>
+)
 
+val CustomWhite = Color(0xDAEFF8EF)
+val CustomBlue = Color(0xFF6C90DA)
+val Customwhit = Color(0xFFF5EAAD)
+val CustomBlack = Color(0xFF1B1B1B)
+val CustomRed = Color(0xFFDB6969)
+val CustomGray = Color(0xFFB1EC75)
+val CustomGrayInput = Color(0x59777575)
+val CustomGrayIcon = Color(0x599C9C9C)
+val CustomPost = Color(0xCEFFFFFF)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Community(navController: NavHostController) {
+    var showDialog by remember { mutableStateOf(false) }
+    val submissions = remember { mutableStateListOf<UserSubmission>() }
     Image(
         painter = painterResource(id = R.drawable.login),
         contentDescription = "Background Image",
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxWidth()
     )
+
 
     Column () {
         Surface (modifier = Modifier
@@ -72,180 +110,392 @@ fun Community(navController: NavHostController) {
                             .padding(top = 10.dp, start = 80.dp, end = 2.dp),
                         tint = CustomWhite
                     )
-                    var text by remember { mutableStateOf("") }
 
                     Surface (modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .padding(top = 8.dp) ,color = Color.Transparent){
-                        TextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = { Text(text = "Share your healthy diet journey here", fontSize = 9.sp, color = CustomWhite) },
+                        .padding(top = 8.dp),color = CustomGrayInput, shape = RoundedCornerShape(3.dp)){
+                        Button(
+                            onClick = { showDialog = true },
                             modifier = Modifier
                                 .align(Alignment.CenterVertically)
                                 .height(30.dp)
-                                .width(190.dp),
+                                .width(190.dp)
+                                .clickable { showDialog = true },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                             shape = RoundedCornerShape(5.dp),
-                            colors = TextFieldDefaults.textFieldColors(
-                                containerColor = ColorTextField
-                            )
                         )
+                        {
+                            Text(text = "Share your healthy journey:", fontSize = 11.sp, color = CustomWhite)
+                        }
                     }
                 }
             }
         }
 
-        Surface (modifier = Modifier
+
+        if (showDialog) {
+            Dialog(onDismissRequest = { showDialog = false }) {
+                DialogContent(
+                    onDismiss = { showDialog = false },
+                    onSubmit = { text, uris ->
+                        submissions.add(UserSubmission(text, uris))
+                    }
+                )
+            }
+        }
+        LazyColumn {
+            itemsIndexed(submissions) { index, submission ->
+                SubmissionCard(submission = submission){
+                    submissions.removeAt(index)
+                }
+            }
+            item {
+                historyCards(
+                    userName = "Bob",
+                    textContent = "It all started with a commitment to nourish my body with wholesome foods. By incorporating more fruits, veggies, and whole grains into my diet, I felt a surge of energy and vitality that I never knew was possible!",
+                    id = R.drawable.scenary
+                )
+            }
+            item {
+                historyCards(
+                    userName = "Popcat",
+                    textContent = "Don't forget the heart-healthy fats found in avocados, nuts, and seeds! These wholesome sources of omega-3 fatty acids not only support brain function but also promote glowing skin and a strong immune system.",
+                    id = R.drawable.popcat
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DialogContent(onDismiss: () -> Unit, onSubmit: (String, List<Uri>) -> Unit) {
+    var textState by remember { mutableStateOf("") }
+    var imageUris by remember { mutableStateOf(listOf<Uri>()) }
+    val context = LocalContext.current
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri: Uri? ->
+            uri?.let {
+                imageUris = imageUris + it
+            }
+        }
+    )
+    Column(
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 10.dp, end = 10.dp, bottom = 5.dp)
-            .border(1.dp, CustomWhite),
-            color = ColorTextField,
-            shape = RoundedCornerShape(3.dp)
-        ){
-            Column {
-                Row {
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TextField(
+            value = textState,
+            onValueChange = { textState = it },
+            label = { Text("What's happening......") },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {
+                onSubmit(textState, imageUris)
+                onDismiss()
+            })
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyRow{
+            itemsIndexed(imageUris){ index, uri ->
+                Box(modifier = Modifier.padding(end = 4.dp)){
+                    val imageStream: InputStream? = context.contentResolver.openInputStream(uri)
+                    val bitmap = BitmapFactory.decodeStream(imageStream)
                     Image(
-                        painter = painterResource(id = com.example.assignemt1.R.drawable.pepe),
-                        contentDescription = null,
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = "Selected Image",
                         modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .padding(top = 5.dp)
+                            .size(100.dp, 100.dp)
+                            .align(Alignment.Center),
+                        contentScale = ContentScale.Crop
                     )
-                    Text(text = "Pepe", modifier = Modifier.padding(start = 10.dp,top = 8.dp),
-                        color = Color.Black, fontWeight = FontWeight.Bold)
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Remove Image",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .align(Alignment.TopEnd)
+                            .clickable {
+                                imageUris = imageUris.filterIndexed { i, _ -> i != index }
+                            }
+                            .background(Color.White.copy(alpha = 0.7f), shape = CircleShape)
+                            .padding(2.dp),
+                        tint = Color.Black
+                    )
                 }
-                Row {
-                    Column {
-                        Text(text = "Here is my secret recipe for brekkie~ It contains some grilled chicken, onion, tomato and avocado! Hope you guys like it!", modifier = Modifier.padding(start = 50.dp))
-                        Image(
-                            painter = painterResource(id = com.example.assignemt1.R.drawable.healthyfood),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(200.dp)
-                                .clip(CircleShape)
-                                .padding(start = 50.dp, top = 5.dp)
-                        )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(onClick = {imagePickerLauncher.launch("image/*")}, shape = RoundedCornerShape(5.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),border = BorderStroke(1.5.dp, CustomWhite),
+            modifier = Modifier
+                .align(Alignment.Start)
+                .height(60.dp))
+        {
+            Image( painter = painterResource(id = R.drawable.camera),
+                contentDescription = "Button Image",
+                modifier = Modifier
+                    .height(30.dp)
+                    .align(Alignment.CenterVertically))
+        }
+
+
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = {
+                onSubmit(textState, imageUris)
+                textState = ""  // Clear the text field
+                imageUris = listOf()  // Clear the image list
+                onDismiss()
+            },
+            modifier = Modifier.align(Alignment.End),
+            colors = ButtonDefaults.buttonColors(containerColor = CustomBlue),
+            shape = RoundedCornerShape(5.dp)
+        ) {
+            Text("Post")
+        }
+    }
+}
+
+
+
+@Composable
+fun SubmissionCard(submission: UserSubmission, onDelete: () -> Unit) {
+    val context = LocalContext.current
+    Surface (modifier = Modifier
+        .fillMaxWidth()
+        .padding(start = 10.dp, end = 10.dp, bottom = 5.dp),
+        color = CustomPost,
+        shape = RoundedCornerShape(5.dp)
+    ) {
+        Column {
+            Spacer(modifier = Modifier.height(8.dp))
+            Row {
+                Spacer(modifier = Modifier.width(8.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.pepe),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = "Pepe", modifier = Modifier.padding(start = 10.dp, top = 8.dp),
+                    color = Color.Black, fontWeight = FontWeight.Bold
+                )
+            }
+
+
+            Row{
+                Column {
+                    Text(submission.text, modifier = Modifier.padding(start = 8.dp, end = 8.dp))
+                    LazyRow {
+                        items(submission.imageUris) { uri ->
+                            val imageStream: InputStream? = context.contentResolver.openInputStream(uri)
+                            val bitmap = BitmapFactory.decodeStream(imageStream)
+                            Image(
+                                bitmap = bitmap.asImageBitmap(),
+                                contentDescription = "Uploaded Image",
+                                modifier = Modifier
+                                    .size(150.dp, 150.dp)
+                                    .padding(top = 8.dp, start = 8.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
                 }
-                Row {
-                    Spacer(Modifier.weight(0.9f))
-                    Icon(
-                        Icons.Rounded.Edit,
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(5.dp),
-                        tint = CustomWhite
-                    )
-                    Icon(
-                        Icons.Rounded.Favorite,
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = 5.dp),
-                        tint = CustomWhite
-                    )
+            }
+            var showComment by remember { mutableStateOf(false) }
+            val (commented, setCommented) = remember { mutableStateOf(false) }
+            val (commentCount, setCommentedCount) = remember { mutableStateOf(0) }
+            Row {
+                Spacer(Modifier.weight(0.9f))
+                Icon(
+                    Icons.Rounded.Edit,
+                    contentDescription = "Comment",
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(5.dp)
+                        .clickable {
+                            showComment = true;
+                            val newCommented = !commented
+                            setCommented(newCommented) // Toggle the liked state
+                            setCommentedCount(commentCount + if (newCommented) 1 else -1)
+                        },
+                    tint = CustomGrayIcon
+                )
+                val (liked, setLiked) = remember { mutableStateOf(false) }
+                val (likeCount, setLikeCount) = remember { mutableStateOf(0) }
+                Icon(
+                    Icons.Rounded.Favorite,
+                    contentDescription = "like",
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 3.dp)
+                        .clickable {
+                            val newLiked = !liked
+                            setLiked(newLiked) // Toggle the liked state
+                            setLikeCount(likeCount + if (newLiked) 1 else -1)
+                        },
+                    tint = if (liked) CustomRed else CustomGrayIcon
+                )
+                Text(
+                    text = likeCount.toString(),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 3.dp),
+                    color = Color.Gray
+                )
+
+                Spacer(modifier = Modifier.width(3.dp))
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete Post",
+                    tint = CustomGrayIcon,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .clickable(onClick = onDelete)
+                        .padding(end = 3.dp),
+                )
+            }
+            if (showComment) {
+                CommentDialog(showComment = showComment, onDismiss = { showComment = false })
+            }
+            val post = remember(submission) {
+                Post(
+                    userName = "pepe",
+                    text = submission.text,
+                    imageUri = "",
+                    likes = 0)
+            }
+            upload(post, submission.imageUris[0])
+        }
+    }
+}
+
+@Composable
+fun CommentDialog(showComment: Boolean, onDismiss: () -> Unit) {
+    if (showComment) {
+        var commentText by remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("Add a Comment") },
+            text = {
+                TextField(
+                    value = commentText,
+                    onValueChange = { commentText = it },
+                    label = { Text("Your comment") },
+                    singleLine = false,
+                    maxLines = 4,
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { onDismiss() })
+                )
+            },
+            confirmButton = {
+                Button(onClick = onDismiss) {
+                    Text("Submit")
+                }
+            },
+            dismissButton = {
+                Button(onClick = onDismiss) {
+                    Text("Cancel")
                 }
             }
-        }
+        )
+    }
+}
 
-        Surface (
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp, bottom = 5.dp)
-                .border(1.dp, CustomWhite),
-            color = ColorTextField,
-            shape = RoundedCornerShape(3.dp)
-        ){
-            Column {
-                Row {
-                    Image(
-                        painter = painterResource(id = com.example.assignemt1.R.drawable.tom),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .padding(top = 5.dp)
-                    )
-                    Text(text = "Tom", modifier = Modifier.padding(start = 10.dp,top = 8.dp),
-                        color = Color.Black, fontWeight = FontWeight.Bold)
-                }
-                Row {
-                    Text(text = "I started my weight loss journey about six months ago, motivated by a desire to improve my health and overall well-being.", modifier = Modifier.padding(start = 50.dp, end = 5.dp))
-                }
-                Row {
-                    Spacer(Modifier.weight(0.9f))
-                    Icon(
-                        Icons.Rounded.Edit,
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(5.dp),
-                        tint = CustomWhite
-                    )
-                    Icon(
-                        Icons.Rounded.Favorite,
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = 5.dp),
-                        tint = CustomWhite
-                    )
-                }
-            }
-        }
 
-        Surface (
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp, bottom = 5.dp)
-                .border(1.dp, CustomWhite),
-            color = ColorTextField,
-            shape = RoundedCornerShape(3.dp)
-        ){
-            Column {
-                Row {
-                    Image(
-                        painter = painterResource(id = com.example.assignemt1.R.drawable.jerry),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .padding(top = 5.dp)
-                    )
-                    Text(text = "Jerry", modifier = Modifier.padding(start = 10.dp,top = 8.dp),
-                        color = Color.Black, fontWeight = FontWeight.Bold)
-                }
-                Row {
-                    Text(text = "I've been part of this community for a while now, reading through your inspiring posts every day. Today, I decided it's time I reached out for some advice and support myself.", modifier = Modifier.padding(start = 50.dp, end = 5.dp))
-                }
-                Row {
-                    Spacer(Modifier.weight(0.9f))
-                    Icon(
-                        Icons.Rounded.Edit,
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(5.dp),
-                        tint = CustomWhite
-                    )
-                    Icon(
-                        Icons.Rounded.Favorite,
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = 5.dp),
-                        tint = CustomWhite
-                    )
-                }
-
+@Composable
+fun historyCards(userName: String, textContent: String, id: Int){
+    Surface (modifier = Modifier
+        .fillMaxWidth()
+        .padding(start = 10.dp, end = 10.dp, bottom = 5.dp),
+        color = CustomPost,
+        shape = RoundedCornerShape(5.dp)
+    ) {
+        Column {
+            Spacer(modifier = Modifier.height(8.dp))
+            Row {
+                Spacer(modifier = Modifier.width(8.dp))
+                Image(
+                    painter = painterResource(id = id),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = userName, modifier = Modifier.padding(start = 10.dp, top = 8.dp),
+                    color = Color.Black, fontWeight = FontWeight.Bold
+                )
             }
 
+            Row{
+                Column {
+                    Text(textContent, modifier = Modifier.padding(start = 8.dp, end = 8.dp))
+                    LazyRow {
+                    }
+                }
+            }
+
+            var showComment by remember { mutableStateOf(false) }
+            val (commented, setCommented) = remember { mutableStateOf(false) }
+            val (commentCount, setCommentedCount) = remember { mutableStateOf(0) }
+            Row {
+                Spacer(Modifier.weight(0.9f))
+                Icon(
+                    Icons.Rounded.Edit,
+                    contentDescription = "Comment",
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(5.dp)
+                        .clickable {
+                            showComment = true;
+                            val newCommented = !commented
+                            setCommented(newCommented) // Toggle the liked state
+                            setCommentedCount(commentCount + if (newCommented) 1 else -1)
+                        },
+                    tint = CustomGrayIcon
+                )
+
+                val (liked, setLiked) = remember { mutableStateOf(false) }
+                val (likeCount, setLikeCount) = remember { mutableStateOf(0) }
+                Icon(
+                    Icons.Rounded.Favorite,
+                    contentDescription = "like",
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 3.dp)
+                        .clickable {
+                            val newLiked = !liked
+                            setLiked(newLiked) // Toggle the liked state
+                            setLikeCount(likeCount + if (newLiked) 1 else -1)
+                        },
+                    tint = if (liked) CustomRed else CustomGrayIcon
+                )
+                Text(
+                    text = likeCount.toString(),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 3.dp),
+                    color = Color.Gray
+                )
+            }
+            if (showComment) {
+                CommentDialog(showComment = showComment, onDismiss = { showComment = false })
+            }
         }
-
-
-
     }
 }
 
