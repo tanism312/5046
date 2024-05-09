@@ -36,6 +36,7 @@ import com.example.assignemt1.data.CalorieRecord
 import com.example.assignemt1.data.Items
 import com.example.assignemt1.data.Tracker
 import android.content.Context
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +57,8 @@ fun FoodInput(tracker: Tracker,
     val calorieRecordsOfDateAndMealType by
     calorieRecordViewModel.getCalorieRecordsByDateAndMealType(selectedDate,tracker.name).observeAsState(emptyList())
     var serveSize by remember { mutableStateOf(0.0) }
+    val list = itemsReturned.items
+    var index by remember { mutableStateOf(0) }
 
     // Add these two lines
     var selectedItem by remember { mutableStateOf<Items?>(null) }
@@ -89,13 +92,14 @@ fun FoodInput(tracker: Tracker,
         }
     }
 
-    val list = itemsReturned.items
+
     if (list.isNotEmpty()) {
-        selectedItem = list[0] // or however you choose an item from the list
+        selectedItem = list[index] // or however you choose an item from the list
         showDialog = true
     }
 
-    if (showDialog && selectedItem != null) {
+    var itemIndexConfirmed by remember { mutableStateOf(-1) }
+    if (showDialog && selectedItem != null && itemIndexConfirmed != index) {
         ServeSizeDialog(
             item = selectedItem!!,
             onConfirm = { double ->
@@ -109,10 +113,17 @@ fun FoodInput(tracker: Tracker,
                         date = selectedDate
                     )
                 )
-                food = ""
-                showDialog = false
+
             },
-            onDismiss = { showDialog = false }
+            onDismiss = {
+                food = ""
+                itemIndexConfirmed = index
+                if(index<list.size-1){
+                    selectedItem = list[index++]
+                }
+                else{onComplete()}
+                showDialog = false
+            }
         )
     }
 }
@@ -120,9 +131,12 @@ fun FoodInput(tracker: Tracker,
 
 @Composable
 fun ServeSizeDialog(onConfirm:(Double)->Unit, onDismiss:()->Unit, item:Items) {
-    var tempServeSize by remember { mutableStateOf(100.0)}
+    var tempServeSize by remember { mutableStateOf(item.serving_size_g)}
 //                isDismissed = false
 //                isServeSizeConfirmed = false
+    LaunchedEffect(item){
+        tempServeSize = item.serving_size_g
+    }
 
     AlertDialog(
         onDismissRequest = { onDismiss()
@@ -133,6 +147,8 @@ fun ServeSizeDialog(onConfirm:(Double)->Unit, onDismiss:()->Unit, item:Items) {
         confirmButton = {
             Button(onClick = {
                 onConfirm(tempServeSize)
+                onDismiss()
+                tempServeSize = item.serving_size_g
 //                serveSize = tempServeSize
 ////                isServeSizeConfirmed = true
 //                showServeSizeDialog = false
@@ -151,7 +167,7 @@ fun ServeSizeDialog(onConfirm:(Double)->Unit, onDismiss:()->Unit, item:Items) {
         },
         title = { Text(text = "Confirm Serve Size(g) of ${item.name}")},
         text = {
-            Text(text = "")
+//            Text(text = "")
             Row(
                 modifier = Modifier.fillMaxWidth(0.9f)
             ){
@@ -167,7 +183,8 @@ fun ServeSizeDialog(onConfirm:(Double)->Unit, onDismiss:()->Unit, item:Items) {
                             tempServeSize = newValue.toDouble()
                         }
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    enabled = false
                 )
 
                 Button(onClick = { tempServeSize += 10 }) {
