@@ -21,8 +21,8 @@ class CalorieRecordViewModel(application: Application) : AndroidViewModel(applic
        return cRepository.getCalorieRecordsByMealType(mealType).asLiveData()
     }
 
-    fun getCalorieRecordsByDateAndMealType(date:Long, mealType: String):LiveData<List<CalorieRecord>>{
-        return cRepository.getCalorieRecordsByDateAndMealType(date,mealType).asLiveData()
+    fun getCalorieRecordsByDateAndMealType(startOfDay: Long, endOfDay: Long, mealType: String):LiveData<List<CalorieRecord>>{
+        return cRepository.getCalorieRecordsByDateAndMealType(startOfDay,endOfDay,mealType).asLiveData()
     }
 
     fun insertCalorieRecord(calorieRecord: CalorieRecord) = viewModelScope.launch(Dispatchers.IO) {

@@ -51,19 +51,22 @@ import java.util.Calendar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.DatePickerState
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import java.time.LocalDate
-
-
+import java.time.LocalTime
+import java.time.ZoneId
+import java.util.concurrent.TimeUnit
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Dashboard(navHostController: NavHostController?) {
     val calorieRecordViewModel: CalorieRecordViewModel = viewModel()
-    var selectedDate:Long by remember { mutableStateOf(Instant.now().toEpochMilli()) }
+    var startOfDay:Long? by remember { mutableStateOf(null) }
+    var endOfDay:Long? by remember { mutableStateOf(null) }
 
     Box(
         contentAlignment = Alignment.TopCenter, // Aligns the content (the Row) at the top center
@@ -81,46 +84,52 @@ fun Dashboard(navHostController: NavHostController?) {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            DateForStats(selectedDate){ date ->
-                selectedDate = date
+            DateForStats(){ (start,end) ->
+                startOfDay = start
+                endOfDay = end
             }
 //            CalorieBudget()
 
-            selectedDate?.let { FoodTrackers(calorieRecordViewModel, it) }
+            startOfDay?.let { endOfDay?.let { it1 -> FoodTrackers(calorieRecordViewModel, it, it1) } }
 
-//    FoodInput(tracker = Trackers[0], RetrofitViewModel(), calorieRecordViewModel)
-
-
-            }
         }
     }
+}
 
+@RequiresApi(Build.VERSION_CODES.O)
+fun returnDatePair(date: LocalDate,
+                   datePickerState: DatePickerState,
+                   onDateSelected:(Pair<Long, Long>) -> Unit){
+    val startOfDay = date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    val endOfDay = date.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    datePickerState.setSelection(startOfDay)
+    onDateSelected(Pair(startOfDay,endOfDay))
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateForStats(selectedDate: Long?, onDateSelected:(Long) -> Unit){
-    //variables to move out
-    val calendar = Calendar.getInstance()
-    calendar.set(2024, 0, 1) // month (0) is January
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = Instant.now().toEpochMilli()
-    )
-    var showDatePicker by remember {
-        mutableStateOf(false)
-    }
-//    var selectedDate by remember {
-//        mutableStateOf(calendar.timeInMillis)
-//    }
+fun DateForStats(onDateSelected:(Pair<Long, Long>) -> Unit){
+    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = Instant.now().toEpochMilli())
+    var date by remember { mutableStateOf(Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(
+        ZoneId.systemDefault()).toLocalDate()) }
+    var showDatePicker by remember { mutableStateOf(false) }
+
 
 
     Surface (shape = RoundedCornerShape(6.dp), color = CustomBlue){
-        Row (modifier = Modifier.fillMaxWidth(0.9f)
-            .clickable { /* to a previous day */ }){
-            Column (modifier = Modifier.weight(2f),){
+        Row (modifier = Modifier.fillMaxWidth(0.9f)){
+            Column (modifier = Modifier
+                .weight(2f)
+                .clickable {
+                    date = date.minusDays(1)
+                    returnDatePair(date,datePickerState,onDateSelected)
+
+                })
+            {
                 Icon(
                     Icons.Rounded.KeyboardArrowLeft,
-                    contentDescription = "Back",
+                    contentDescription = "Back date by one day",
                     modifier = Modifier
                         .align(Alignment.Start)
                         .padding(10.dp),
@@ -128,7 +137,9 @@ fun DateForStats(selectedDate: Long?, onDateSelected:(Long) -> Unit){
 
                 )
             }
-            Column(modifier = Modifier.weight(6f).clickable { showDatePicker = true }){
+            Column(modifier = Modifier
+                .weight(6f)
+                .clickable { showDatePicker = true }){
                 Row (modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(10.dp)){
@@ -140,13 +151,18 @@ fun DateForStats(selectedDate: Long?, onDateSelected:(Long) -> Unit){
                             .padding(end = 5.dp),
                         tint = CustomWhite
                     )
-                    Text(text = "Today", modifier = Modifier.align(Alignment.CenterVertically),color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text(text = date.toString(), modifier = Modifier.align(Alignment.CenterVertically),color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
             }
-            Column (modifier = Modifier.weight(2f).clickable { /* to a later day */}){
+            Column (modifier = Modifier
+                .weight(2f)
+                .clickable {
+                    date = date.plusDays(1)
+                    returnDatePair(date,datePickerState,onDateSelected)
+                }){
                 Icon(
                     Icons.Rounded.KeyboardArrowRight,
-                    contentDescription = "Back",
+                    contentDescription = "Forward Date by one day",
                     modifier = Modifier
                         .align(Alignment.End)
                         .padding(10.dp),
@@ -163,9 +179,9 @@ fun DateForStats(selectedDate: Long?, onDateSelected:(Long) -> Unit){
             },
             confirmButton = {
                 TextButton(onClick = {
+                    date = Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(ZoneId.systemDefault()).toLocalDate()
                     showDatePicker = false
-                    //selectedDateMillis!! null safety because type declared as Long?
-                    onDateSelected(datePickerState.selectedDateMillis!!)
+                    returnDatePair(date,datePickerState,onDateSelected)
                 }) {
                     Text(text = "OK")
                 }
@@ -179,11 +195,8 @@ fun DateForStats(selectedDate: Long?, onDateSelected:(Long) -> Unit){
             }
         ) //end of dialog
         { //still column scope
-            DatePicker(
-                state = datePickerState
-            )
+            DatePicker(state = datePickerState)
         }
-
     }
 }
 
@@ -208,8 +221,10 @@ fun CalorieBudget(){
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewModel, selectedDate: Long) {
+fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewModel, startOfDay:Long,
+                  endOfDay:Long) {
     var showDialog by remember { mutableStateOf(false) }
 
     Surface(
@@ -263,80 +278,18 @@ fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewMode
 
     if (showDialog){
         Dialog(onDismissRequest = { showDialog = false }) {
-            FoodInput(tracker, RetrofitViewModel(),calorieRecordViewModel,selectedDate,
+            FoodInput(tracker, RetrofitViewModel(),calorieRecordViewModel, startOfDay, endOfDay,
                 onComplete = { showDialog = false })
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun FoodTrackers(calorieRecordViewModel: CalorieRecordViewModel,selectedDate: Long){
+fun FoodTrackers(calorieRecordViewModel: CalorieRecordViewModel,startOfDay: Long,endOfDay: Long){
     LazyColumn(horizontalAlignment = Alignment.CenterHorizontally){
         items(Trackers){
-            SingleTracker(tracker = it,calorieRecordViewModel,selectedDate)
+            SingleTracker(tracker = it,calorieRecordViewModel,startOfDay, endOfDay)
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun preview() {
-
-}
-//@Composable
-//fun DashboardButton(bottomName:String, @DrawableRes id: Int,/* onClickAction: Unit*/){
-//    Surface (modifier = Modifier
-//        .padding(20.dp)
-//        .height(120.dp)
-//        .width(110.dp),
-//        color = Customwhit,
-//        shape = RoundedCornerShape(5.dp),
-//        shadowElevation = 20.dp,
-//        onClick = { /* onClickAction*/ }
-//    ){
-//        Column {
-//            Image( painter = painterResource(id = id),
-//                contentDescription = "Button Image",
-//                modifier = Modifier
-//                    .height(90.dp)
-//                    .align(Alignment.CenterHorizontally)
-//                    .padding(10.dp))
-//            Text(text = bottomName,
-//                color = CustomBlack,
-//                fontSize = 18.sp,
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier.align(Alignment.CenterHorizontally))
-//        }
-//    }
-//}
-//@Composable
-//fun MenuOfDBButtons(){
-//    Column (
-//        ){
-//        Row(
-//            horizontalArrangement = Arrangement.Center,
-//            modifier = Modifier.fillMaxWidth(),
-//        ){
-//            DashboardButton(bottomName = "Steps", id = R.drawable.footprint)
-//            DashboardButton(bottomName = "Breakfast", id = R.drawable.breakfast)
-//        }
-//        Row(
-//            horizontalArrangement = Arrangement.Center,
-//            modifier = Modifier.fillMaxWidth(),
-//        ){
-//            DashboardButton(bottomName = "Water", id = R.drawable.water)
-//            DashboardButton(bottomName = "Lunch", id = R.drawable.lunch)
-//        }
-//        Row(
-//            horizontalArrangement = Arrangement.Center,
-//            modifier = Modifier.fillMaxWidth(),
-//        ) {
-//            DashboardButton(bottomName = "Fruit", id = R.drawable.fruits)
-//            DashboardButton(bottomName = "Dinner", id = R.drawable.dinner)
-//        }
-//    }
-//}
-
-
-
-

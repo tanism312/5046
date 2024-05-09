@@ -16,8 +16,8 @@ class CalorieRecordRepository (application: Application) {
     fun getCalorieRecordsByMealType(mealType: String): Flow<List<CalorieRecord>> {
         return calorieRecordDao.getCalorieRecordsByMealType(mealType)
     }
-    fun getCalorieRecordsByDateAndMealType(date:Long, mealType: String): Flow<List<CalorieRecord>> {
-        return calorieRecordDao.getCalorieRecordsByDateAndMealType(date,mealType)
+    fun getCalorieRecordsByDateAndMealType(startOfDay: Long, endOfDay: Long, mealType: String): Flow<List<CalorieRecord>> {
+        return calorieRecordDao.getCalorieRecordsByDateAndMealType(startOfDay,endOfDay,mealType)
     }
     suspend fun insert(calorieRecord: CalorieRecord) {
         calorieRecordDao.insertCalorieRecord(calorieRecord)

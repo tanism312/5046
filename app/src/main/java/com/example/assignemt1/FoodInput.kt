@@ -36,26 +36,31 @@ import com.example.assignemt1.data.CalorieRecord
 import com.example.assignemt1.data.Items
 import com.example.assignemt1.data.Tracker
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.Instant
 
+@RequiresApi(Build.VERSION_CODES.O)
 @ExperimentalMaterial3Api
 @Composable
 fun FoodInput(tracker: Tracker,
               viewModel: RetrofitViewModel,
               calorieRecordViewModel: CalorieRecordViewModel,
-              selectedDate:Long,
+              startOfDay: Long,
+              endOfDay: Long,
               onComplete:()->Unit
 ) {
     var food by remember { mutableStateOf("") }
     val itemsReturned by viewModel.retrofitResponse
     val calorieRecords by calorieRecordViewModel.allCalorieRecords.observeAsState(emptyList())
     val calorieRecordsOfDateAndMealType by
-    calorieRecordViewModel.getCalorieRecordsByDateAndMealType(selectedDate,tracker.name).observeAsState(emptyList())
+    calorieRecordViewModel.getCalorieRecordsByDateAndMealType(startOfDay, endOfDay,tracker.name).observeAsState(emptyList())
     var serveSize by remember { mutableStateOf(0.0) }
     val list = itemsReturned.items
     var index by remember { mutableStateOf(0) }
@@ -110,7 +115,7 @@ fun FoodInput(tracker: Tracker,
                         calorie = selectedItem!!.calories * serveSize / 100,
                         ingredient = selectedItem!!.name,
                         mealType = tracker.name,
-                        date = selectedDate
+                        date = Instant.now().toEpochMilli()
                     )
                 )
 
