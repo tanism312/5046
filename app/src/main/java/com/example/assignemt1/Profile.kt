@@ -1,7 +1,6 @@
 package com.example.assignemt1
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,12 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -367,7 +363,6 @@ fun Profile(navController: NavHostController) {
         {
             Text("Save Changes")
         }
-<<<<<<< HEAD
         Button(
             onClick = {
                 // Sign out logic
@@ -381,8 +376,6 @@ fun Profile(navController: NavHostController) {
             Text("Sign Out", fontSize = 18.sp, color = Color.White)
         }
 
-=======
-
         Button(
             onClick = {},
             colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = Color.Red)
@@ -391,7 +384,6 @@ fun Profile(navController: NavHostController) {
             Text(text = "Log Out")
 
         }
->>>>>>> 7d261a42e1ca8b070b00eaf5f110375bd6a877f1
     }
 }
 
