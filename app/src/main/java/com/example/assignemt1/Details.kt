@@ -43,6 +43,18 @@ import androidx.compose.material3.Text
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Details(navController: NavHostController) {
+    val states = listOf(
+        "Sedentary" to "You need to consume 2000 Cal each day.",
+        "Light Activity" to "You need to consume 2200 Cal each day.",
+        "Moderate Activity" to "You need to consume 2400 Cal each day.",
+        "Very Active" to "You need to consume 2600 Cal each day.",
+        "Extremely Active" to "You need to consume 2800 Cal each day."
+    )
+
+    var isExpanded by remember { mutableStateOf(false) }
+    var selectedState by remember { mutableStateOf(states[0].first) }
+    var tip by remember { mutableStateOf(states[0].second) }
+
     Image(
         painter = painterResource(id = R.drawable.login),
         contentDescription = "Background Image",
@@ -66,17 +78,7 @@ fun Details(navController: NavHostController) {
         )
 
 
-    val states = listOf(
-        "Sedentary" to "You need to consume 2000 Cal each day.",
-        "Light Activity" to "You need to consume 2200 Cal each day.",
-        "Moderate Activity" to "You need to consume 2400 Cal each day.",
-        "Very Active" to "You need to consume 2600 Cal each day.",
-        "Extremely Active" to "You need to consume 2800 Cal each day."
-    )
 
-    var isExpanded by remember { mutableStateOf(false) }
-    var selectedState by remember { mutableStateOf(states[0].first) }
-    var tip by remember { mutableStateOf(states[0].second) }
 
     Column(modifier = Modifier.padding(16.dp)) {
         ExposedDropdownMenuBox(

@@ -2,6 +2,7 @@ package com.example.assignemt1
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavHostController
 
 
@@ -86,7 +88,7 @@ fun Profile(navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(16.dp) // Add spacing between boxes
         ) { // Use a Column for vertical arrangement
             Text(
-                text = "Dashboard", // Your desired text
+                text = "Profile", // Your desired text
                 modifier = Modifier.padding(16.dp),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
@@ -98,7 +100,7 @@ fun Profile(navController: NavHostController) {
             contentDescription = "Profile Picture",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(120.dp)
+                .size(80.dp)
                 .height(60.dp)
                 .clip(CircleShape),
         )
@@ -151,7 +153,7 @@ fun Profile(navController: NavHostController) {
         Spacer(modifier = Modifier.height(26.dp))
 
 
-        Column {
+        Column(/*Modifier.scrollable()*/) {
             Row (horizontalArrangement  =  Arrangement.SpaceEvenly) {
                     Icon(
                         Icons.Rounded.Person,
@@ -256,7 +258,14 @@ fun Profile(navController: NavHostController) {
                 else {
                     TextField(
                         value = tempAge,
-                        onValueChange = { tempAge = it },
+                        onValueChange = {
+//                                        if (it.isDigitsOnly() && it.toInt() > 0){
+                                            tempAge = it
+//                                        }
+//                                        else{
+////                                            showError = true
+//                                        }
+                        },
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .padding(start = 5.dp),

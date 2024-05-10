@@ -1,10 +1,11 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
 package com.example.assignemt1
 
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,6 +53,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.DatePickerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
@@ -83,7 +85,7 @@ fun Dashboard(navHostController: NavHostController?) {
 
         Column(
             modifier = Modifier
-                .padding(30.dp)
+                .padding(10.dp)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
@@ -107,7 +109,7 @@ fun Dashboard(navHostController: NavHostController?) {
                 startOfDay = start
                 endOfDay = end
             }
-//            CalorieBudget()
+            CalorieBudget()
             Spacer(modifier = Modifier.height(5.dp))
 
             startOfDay?.let { endOfDay?.let { it1 -> FoodTrackers(calorieRecordViewModel, it, it1) } }
@@ -258,9 +260,9 @@ fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewMode
 
     Surface(
         Modifier
-            .padding(5.dp, 20.dp)
+            .padding(10.dp)
             .fillMaxWidth()
-            .height(60.dp)
+            .height(80.dp)
             .clickable { showDialog = true }
             ,
         color = Customwhit,
@@ -269,9 +271,9 @@ fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewMode
         )
     {
         Row (horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically){
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(10.dp, 10.dp, 20.dp,10.dp)){
             Image(modifier = Modifier
-                .padding(7.dp)
                 .fillMaxHeight(),
                 painter = painterResource(id = tracker.image),
                 contentDescription = tracker.description)
@@ -285,22 +287,17 @@ fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewMode
                     color = CustomBlack,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold)
-                Text(text = String.format("%.2f",caloriesPerMeal))
+                Text(text = String.format("%.2f",caloriesPerMeal)+"Cal")
             }
-            Row {
-                if (tracker.name=="Water")
-                {
 
-                }
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Icon",
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(end = 10.dp)
-                )
-            }
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Icon",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(color = Color(0x4D000000), shape = CircleShape)
+            )
 
         }
     }

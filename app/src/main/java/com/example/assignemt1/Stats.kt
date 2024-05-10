@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -89,6 +90,7 @@ fun PieChart(
     )
     )
 
+
     LaunchedEffect(key1 = true){
         animationPlayed = true
     }
@@ -97,13 +99,31 @@ fun PieChart(
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally)
     {
-        Spacer(modifier = Modifier.padding(20.dp))
+        Column( // Use Column for vertical arrangement
+            modifier = Modifier
+                .fillMaxWidth()  // Make the column fill the entire screen
+                .padding(16.dp), // Add some padding around content
+            horizontalAlignment = Alignment.CenterHorizontally, // Center content horizontally
+            verticalArrangement = Arrangement.spacedBy(16.dp) // Add spacing between boxes
+        ) { // Use a Column for vertical arrangement
+            Text(
+                text = "Report", // Your desired text
+                modifier = Modifier.padding(16.dp),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = CustomBlack
+            )
+        }
+//        Spacer(modifier = Modifier.padding(20.dp))
         Box(modifier = Modifier.size(animateSize.dp),
             contentAlignment = Alignment.Center)
         {
+            Text(text = "1600 Cal",fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = CustomWhite)
             Canvas(
                 modifier = Modifier
-                    .size(radiusQuter * 2f)
+                    .size(radiusQuter * 1.5f)
                     .rotate(animateRotation)
             ){
                 floatValue.forEachIndexed{ index, value ->
@@ -129,7 +149,7 @@ fun DetailsPieChart(
 ){
 
     Column (modifier = Modifier
-        .padding(top = 60.dp)
+        .padding(top = 15.dp)
         .fillMaxWidth())
     {
         Text(text = "Daily Calorie Intake", color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 25.dp))

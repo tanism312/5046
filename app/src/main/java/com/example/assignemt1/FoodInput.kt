@@ -39,6 +39,8 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.magnifier
@@ -77,6 +79,16 @@ fun FoodInput(tracker: Tracker,
     var index by remember { mutableStateOf(0) }
     var selectedItem by remember { mutableStateOf<Items?>(null) }
     var showDialog by remember { mutableStateOf(false) }
+//    var showError by remember { mutableStateOf(false) }
+    var counter by remember { mutableStateOf(0) }
+//
+//    LaunchedEffect(itemsReturned){
+//        if(list.isEmpty() /*&& counter !=0*/)
+//        {
+//            showError = true
+//            counter++
+//        }
+//    }
 
     Column(
         Modifier
@@ -94,28 +106,46 @@ fun FoodInput(tracker: Tracker,
         Text(text = "Better to have the quantity of food.", color = Color.Gray)
         Text(text = "E.g. \"300g tomatoes and 0.5 kg brisket.\"",color = Color.Gray)
 
+//        if (showError)
+//        {
+//            Text(text = "Invalid Input. Please try again.", color = Color.Red)
+//        }
+
         Button(modifier = Modifier
             .align(Alignment.CenterHorizontally)
             .padding(10.dp),
             onClick = {
                 viewModel.getResponse(food)
-        }) {
+//                counter++
+//                if(list.isEmpty() /*&& counter !=0*/)
+//                {
+//                    showError = true
+//                    counter++
+//                }
+            }
+        ) {
             Text("Submit")
         }
 
         LazyColumn{
+
             itemsIndexed(calorieRecordsOfDateAndMealType){
                     index,calorieRecord ->
                 CalorieRecordItem(calorieRecord = calorieRecord,
                     onDelete = {calorieRecordViewModel.deleteCalorieRecord(calorieRecord)})
+                if(index < calorieRecordsOfDateAndMealType.size - 1)
+                {
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
             }
         }
     }
 
-
     if (list.isNotEmpty()) {
+//        showError = false
         selectedItem = list[index] // or however you choose an item from the list
         showDialog = true
+
     }
 
     var itemIndexConfirmed by remember { mutableStateOf(-1) }
@@ -133,7 +163,6 @@ fun FoodInput(tracker: Tracker,
                         date = Instant.now().toEpochMilli()
                     )
                 )
-
             },
             onDismiss = {
                 food = ""
@@ -191,7 +220,9 @@ fun ServeSizeDialog(onConfirm:(Double)->Unit, onDismiss:()->Unit, item:Items) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(text = item.name, fontSize = 25.sp, modifier = Modifier.padding(bottom = 20.dp))
                 Row(
-                    modifier = Modifier.fillMaxWidth(0.9f).fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
 
                 ){
@@ -228,18 +259,20 @@ fun CalorieRecordItem(calorieRecord: CalorieRecord,onDelete :()->Unit) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .background(Color.LightGray, RoundedCornerShape(10.dp))
-            .padding(5.dp)
-            .fillMaxWidth())
+            .padding(10.dp)
+            .fillMaxWidth()
+    )
     {
         calorieRecord.ingredient?.let { Text(text = it, modifier = Modifier.padding(5.dp,0.dp)) }
-        calorieRecord.calorie?.let { Text(text = String.format("%.2f",it)+"Kcal") }
+        calorieRecord.calorie?.let { Text(text = String.format("%.2f",it)+"Cal") }
         IconButton(onClick = {onDelete()} ) {
             Icon(Icons.Default.Delete,
                 contentDescription = "Delete",
                 Modifier
                     .background(Color.White, CircleShape)
                     .size(40.dp)
-                    .padding(5.dp)
+                    .padding(5.dp),
+                tint = Color.Red
                 )
         }
     }
