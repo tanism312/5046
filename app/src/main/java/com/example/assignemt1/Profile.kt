@@ -46,8 +46,8 @@ import com.google.firebase.auth.FirebaseAuth
 
 val CustomFont = Color(0xDA494848)
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 
 fun Profile(navController: NavHostController) {
 
@@ -57,28 +57,28 @@ fun Profile(navController: NavHostController) {
     val scaffoldState = rememberScaffoldState()
 
 
-        var isEditingPerson by remember { mutableStateOf(false) }
-        var isEditingGender by remember { mutableStateOf(false) }
-        var isEditingHome by remember { mutableStateOf(false) }
-        var isEditingWeight by remember { mutableStateOf(false) }
-        var isEditingAge by remember { mutableStateOf(false) }
+    var isEditingPerson by remember { mutableStateOf(false) }
+    var isEditingGender by remember { mutableStateOf(false) }
+    var isEditingHome by remember { mutableStateOf(false) }
+    var isEditingWeight by remember { mutableStateOf(false) }
+    var isEditingAge by remember { mutableStateOf(false) }
 
 
-        var person by remember { mutableStateOf("Mr. Butch") }
-        var gender by remember { mutableStateOf("Male") }
-        var weight by remember { mutableStateOf("73 Kg") }
-        var age by remember { mutableStateOf("29") }
+    var person by remember { mutableStateOf("Mr. Butch") }
+    var gender by remember { mutableStateOf("Male") }
+    var weight by remember { mutableStateOf("73 Kg") }
+    var age by remember { mutableStateOf("29") }
 
-        var tempPerson by remember { mutableStateOf(person) }
-        var tempGender by remember { mutableStateOf(gender) }
-        var tempWeight by remember { mutableStateOf(weight) }
-        var tempAge by remember { mutableStateOf(age) }
+    var tempPerson by remember { mutableStateOf(person) }
+    var tempGender by remember { mutableStateOf(gender) }
+    var tempWeight by remember { mutableStateOf(weight) }
+    var tempAge by remember { mutableStateOf(age) }
 
-        val genderIcon = painterResource(id = R.drawable.gender)
-        val weightIcon = painterResource(id = R.drawable.weight)
-        val ageIcon = painterResource(id = R.drawable.age)
+    val genderIcon = painterResource(id = R.drawable.gender)
+    val weightIcon = painterResource(id = R.drawable.weight)
+    val ageIcon = painterResource(id = R.drawable.age)
 
-        Image(
+    Image(
         painter = painterResource(id = R.drawable.login),
         contentDescription = "Background Image",
         contentScale = ContentScale.Crop,
@@ -209,92 +209,92 @@ fun Profile(navController: NavHostController) {
 //            }
 
 //        Spacer(modifier = Modifier.height(15.dp))
-            Row(horizontalArrangement  =  Arrangement.SpaceEvenly) {
-                Icon(painter = genderIcon,
-                    contentDescription = "Gender",
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .size(35.dp),
-                    tint = CustomWhite
-                )
+        Row(horizontalArrangement  =  Arrangement.SpaceEvenly) {
+            Icon(painter = genderIcon,
+                contentDescription = "Gender",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(35.dp),
+                tint = CustomWhite
+            )
 
-                if (!isEditingGender) {
-                    Text(text = gender,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 5.dp),
-                        color = Color.DarkGray,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold)
-                } else {
-                    TextField(
-                        value = tempGender,
-                        onValueChange = { tempGender = it },
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 5.dp),
-                        textStyle = TextStyle(color = Color.DarkGray, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    )
-                }
-                Spacer(modifier = Modifier.width(45.dp))
-                Icon(
-                    Icons.Rounded.Edit,
-                    contentDescription = "Edit Gender",
+            if (!isEditingGender) {
+                Text(text = gender,
                     modifier = Modifier
-                        .padding(10.dp)
-                        .size(25.dp)
-                        .clickable { isEditingGender = !isEditingGender },
-                    tint = CustomWhite
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 5.dp),
+                    color = Color.DarkGray,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold)
+            } else {
+                TextField(
+                    value = tempGender,
+                    onValueChange = { tempGender = it },
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 5.dp),
+                    textStyle = TextStyle(color = Color.DarkGray, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 )
             }
+            Spacer(modifier = Modifier.width(45.dp))
+            Icon(
+                Icons.Rounded.Edit,
+                contentDescription = "Edit Gender",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(25.dp)
+                    .clickable { isEditingGender = !isEditingGender },
+                tint = CustomWhite
+            )
+        }
         Spacer(modifier = Modifier.height(15.dp))
-            Row(horizontalArrangement  =  Arrangement.SpaceEvenly) {
-                Icon(
-                    painter = ageIcon,
-                    contentDescription = "Edit Age",
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .size(35.dp),
-                    tint = CustomWhite
-                )
+        Row(horizontalArrangement  =  Arrangement.SpaceEvenly) {
+            Icon(
+                painter = ageIcon,
+                contentDescription = "Edit Age",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(35.dp),
+                tint = CustomWhite
+            )
 
-                if (!isEditingAge) {
-                    Text(text = age,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 5.dp),
-                        color = Color.DarkGray,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold)
-                }
-                else {
-                    TextField(
-                        value = tempAge,
-                        onValueChange = {
+            if (!isEditingAge) {
+                Text(text = age,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 5.dp),
+                    color = Color.DarkGray,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold)
+            }
+            else {
+                TextField(
+                    value = tempAge,
+                    onValueChange = {
 //                                        if (it.isDigitsOnly() && it.toInt() > 0){
-                                            tempAge = it
+                        tempAge = it
 //                                        }
 //                                        else{
 ////                                            showError = true
 //                                        }
-                        },
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 5.dp),
-                        textStyle = TextStyle(color = Color.DarkGray, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    )
-                }
-                Spacer(modifier = Modifier.width(65.dp))
-                Icon(
-                    Icons.Rounded.Edit,
-                    contentDescription = "Edit Age",
+                    },
                     modifier = Modifier
-                        .padding(10.dp) // Add spacing after the number
-                        .size(25.dp)
-                        .clickable { isEditingAge = !isEditing },
-                    tint = CustomWhite
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 5.dp),
+                    textStyle = TextStyle(color = Color.DarkGray, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 )
             }
+            Spacer(modifier = Modifier.width(65.dp))
+            Icon(
+                Icons.Rounded.Edit,
+                contentDescription = "Edit Age",
+                modifier = Modifier
+                    .padding(10.dp) // Add spacing after the number
+                    .size(25.dp)
+                    .clickable { isEditingAge = !isEditing },
+                tint = CustomWhite
+            )
+        }
         Spacer(modifier = Modifier.height(15.dp))
         Row(horizontalArrangement  =  Arrangement.SpaceEvenly) {
             Icon(
@@ -363,8 +363,6 @@ fun Profile(navController: NavHostController) {
         {
             Text("Save Changes")
         }
-<<<<<<< HEAD
-=======
 
 //        Button(
 //            onClick = {
@@ -381,36 +379,20 @@ fun Profile(navController: NavHostController) {
 
 
 
->>>>>>> f46e4478465bf26f65857264210620dc22bba87d
         Button(
             onClick =  {
                 // Sign out logic
                 val auth = FirebaseAuth.getInstance()
                 auth.signOut()
                 // Navigate back to the login or home screen
-<<<<<<< HEAD
-                navController.navigate("MainActivity")
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Sign Out", fontSize = 18.sp, color = Color.White)
-        }
-
-        Button(
-            onClick = {},
-=======
                 navController.navigate("LogIn")},
->>>>>>> f46e4478465bf26f65857264210620dc22bba87d
             colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = Color.Red)
         )
         {
             Text(text = "Log Out")
 
         }
-<<<<<<< HEAD
-=======
 
->>>>>>> f46e4478465bf26f65857264210620dc22bba87d
     }
 }
 
