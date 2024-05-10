@@ -73,3 +73,9 @@ fun upload(post: Post, uri: Uri)
                 }
         }  //firebaseRef.child("posts").child(post.userName).child(post.postId.toString()).setValue("try")
 }
+
+fun upload2(post: Post)
+{
+    firebaseRef = FirebaseDatabase.getInstance().getReference()
+    firebaseRef.child("posts").child(post.userName).child(post.postId.toString()).setValue("try")
+}

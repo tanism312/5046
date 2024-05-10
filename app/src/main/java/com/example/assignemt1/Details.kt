@@ -125,8 +125,6 @@ fun Details(navController: NavHostController) {
                 color = CustomBlack
             )
         }
-
-
     }
         Spacer(modifier = Modifier.height(55.dp))
         Button(onClick = { navController.popBackStack() }) {

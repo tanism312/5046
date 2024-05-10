@@ -46,6 +46,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.darkColors
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
@@ -151,6 +152,7 @@ fun FoodInput(tracker: Tracker,
     var itemIndexConfirmed by remember { mutableStateOf(-1) }
     if (showDialog && selectedItem != null && itemIndexConfirmed != index) {
         ServeSizeDialog(
+
             item = selectedItem!!,
             onConfirm = { double ->
                 serveSize = double
@@ -160,7 +162,7 @@ fun FoodInput(tracker: Tracker,
                         calorie = selectedItem!!.calories * serveSize / 100,
                         ingredient = selectedItem!!.name,
                         mealType = tracker.name,
-                        date = Instant.now().toEpochMilli()
+                        date = startOfDay
                     )
                 )
             },
@@ -178,6 +180,7 @@ fun FoodInput(tracker: Tracker,
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ServeSizeDialog(onConfirm:(Double)->Unit, onDismiss:()->Unit, item:Items) {
     var tempServeSize by remember { mutableStateOf(item.serving_size_g)}
@@ -231,6 +234,7 @@ fun ServeSizeDialog(onConfirm:(Double)->Unit, onDismiss:()->Unit, item:Items) {
                     }
 
                     TextField(
+                      colors = TextFieldDefaults.textFieldColors(disabledTextColor = Color.Black),
                         modifier = Modifier.width(100.dp),
                         value = tempServeSize.toString(),
                         onValueChange = { newValue ->

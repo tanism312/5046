@@ -138,7 +138,10 @@ fun Community(navController: NavHostController) {
                 DialogContent(
                     onDismiss = { showDialog = false },
                     onSubmit = { text, uris ->
-                        submissions.add(UserSubmission(text, uris))
+                        //submissions.add(UserSubmission(text, uris))
+                        submissions.add(0, UserSubmission(text, uris))
+
+
                     }
                 )
             }
@@ -376,7 +379,14 @@ fun SubmissionCard(submission: UserSubmission, onDelete: () -> Unit) {
                     imageUri = "",
                     likes = 0)
             }
-            upload(post, submission.imageUris[0])
+            if (submission.imageUris.isEmpty())
+            {
+                upload2(post)
+            }else
+            {
+                upload(post, submission.imageUris[0])
+            }
+
         }
     }
 }

@@ -1,11 +1,14 @@
 package com.example.assignemt1
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Edit
@@ -153,50 +156,50 @@ fun Profile(navController: NavHostController) {
         Spacer(modifier = Modifier.height(26.dp))
 
 
-        Column(/*Modifier.scrollable()*/) {
-            Row (horizontalArrangement  =  Arrangement.SpaceEvenly) {
-                    Icon(
-                        Icons.Rounded.Person,
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .size(35.dp),
-                        tint = CustomWhite
-                    )
-                if (!isEditingPerson) {
-                    Text(text = person,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 5.dp),
-                        color = Color.DarkGray,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold)
-                }
-                else {
-                    TextField(
-                        value = tempPerson,
-                        onValueChange = { tempPerson = it },
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 5.dp),
-                        textStyle = TextStyle(color = Color.DarkGray, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    )
-                }
+//        Column(/*Modifier.scrollable()*/) {
+//            Row (horizontalArrangement  =  Arrangement.SpaceEvenly) {
+//                    Icon(
+//                        Icons.Rounded.Person,
+//                        contentDescription = "Back",
+//                        modifier = Modifier
+//                            .padding(10.dp)
+//                            .size(35.dp),
+//                        tint = CustomWhite
+//                    )
+//                if (!isEditingPerson) {
+//                    Text(text = person,
+//                        modifier = Modifier
+//                            .align(Alignment.CenterVertically)
+//                            .padding(start = 5.dp),
+//                        color = Color.DarkGray,
+//                        fontSize = 20.sp,
+//                        fontWeight = FontWeight.Bold)
+//                }
+//                else {
+//                    TextField(
+//                        value = tempPerson,
+//                        onValueChange = { tempPerson = it },
+//                        modifier = Modifier
+//                            .align(Alignment.CenterVertically)
+//                            .padding(start = 5.dp),
+//                        textStyle = TextStyle(color = Color.DarkGray, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+//                    )
+//                }
+//
+//                Icon(
+//                    Icons.Rounded.Edit,
+//                    contentDescription = "Edit Person",
+//                    modifier = Modifier
+//                        .padding(15.dp)
+//                        .size(25.dp)
+//                        .clickable { isEditingPerson = !isEditingPerson },
+//                    tint = CustomWhite
+//                )
+//            }
+//
+//            }
 
-                Icon(
-                    Icons.Rounded.Edit,
-                    contentDescription = "Edit Person",
-                    modifier = Modifier
-                        .padding(15.dp)
-                        .size(25.dp)
-                        .clickable { isEditingPerson = !isEditingPerson },
-                    tint = CustomWhite
-                )
-            }
-
-            }
-
-        Spacer(modifier = Modifier.height(15.dp))
+//        Spacer(modifier = Modifier.height(15.dp))
             Row(horizontalArrangement  =  Arrangement.SpaceEvenly) {
                 Icon(painter = genderIcon,
                     contentDescription = "Gender",
@@ -351,6 +354,15 @@ fun Profile(navController: NavHostController) {
         )
         {
             Text("Save Changes")
+        }
+
+        Button(
+            onClick = {},
+            colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = Color.Red)
+        )
+        {
+            Text(text = "Log Out")
+
         }
     }
 }

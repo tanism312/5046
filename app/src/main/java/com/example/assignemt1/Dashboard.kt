@@ -109,10 +109,14 @@ fun Dashboard(navHostController: NavHostController?) {
                 startOfDay = start
                 endOfDay = end
             }
-            CalorieBudget()
-            Spacer(modifier = Modifier.height(5.dp))
+            var caloriesPerDay by remember {
+                mutableStateOf(0.0)
+            }
+//            CalorieBudget(caloriesPerDay)
+//            Spacer(modifier = Modifier.height(5.dp))
 
-            startOfDay?.let { endOfDay?.let { it1 -> FoodTrackers(calorieRecordViewModel, it, it1) } }
+            startOfDay?.let { endOfDay?.let { it1 -> FoodTrackers(calorieRecordViewModel, it, it1,
+                /*{cpd -> caloriesPerDay = cpd}*/) } }
 
         }
     }
@@ -146,7 +150,6 @@ fun DateForStats(onDateSelected:(Pair<Long, Long>) -> Unit){
                 .clickable {
                     date = date.minusDays(1)
                     returnDatePair(date, datePickerState, onDateSelected)
-
                 })
             {
                 Icon(
@@ -223,7 +226,7 @@ fun DateForStats(onDateSelected:(Pair<Long, Long>) -> Unit){
 }
 
 @Composable
-fun CalorieBudget(){
+fun CalorieBudget( caloriesPerDay: Double ){
     Surface (modifier = Modifier
         .padding(15.dp),
         color = Color.Transparent){
@@ -234,10 +237,12 @@ fun CalorieBudget(){
                     .height(80.dp)
                     .padding(5.dp))
             Column {
-                Text("Calorie Budget", modifier = Modifier
+                Text("Calorie Consumption", modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(8.dp), color = CustomWhite, fontSize = 25.sp, fontWeight = FontWeight.Bold)
-                Text("2415", modifier = Modifier.align(Alignment.CenterHorizontally), fontWeight = FontWeight.Bold, color = CustomWhite, fontSize = 20.sp, fontStyle = FontStyle.Italic)
+
+                Text(String.format("%.2f",caloriesPerDay)+"Cal",
+                    modifier = Modifier.align(Alignment.CenterHorizontally), fontWeight = FontWeight.Bold, color = CustomWhite, fontSize = 20.sp, fontStyle = FontStyle.Italic)
             }
         }
     }
@@ -246,7 +251,7 @@ fun CalorieBudget(){
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewModel, startOfDay:Long,
-                  endOfDay:Long) {
+                  endOfDay:Long, returnCalories:(Double)->Unit) {
     var showDialog by remember { mutableStateOf(false) }
 
     val calorieRecordsOfDateAndMealType by
@@ -256,6 +261,7 @@ fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewMode
 
     LaunchedEffect(calorieRecordsOfDateAndMealType) {
         caloriesPerMeal = calorieRecordsOfDateAndMealType.sumByDouble { it.calorie!! }
+        returnCalories(caloriesPerMeal)
     }
 
     Surface(
@@ -313,9 +319,24 @@ fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewMode
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FoodTrackers(calorieRecordViewModel: CalorieRecordViewModel,startOfDay: Long,endOfDay: Long){
+    var caloriesPerDay by remember {
+        mutableStateOf(0.0)
+    }
+
+    LaunchedEffect(startOfDay)
+    {
+        caloriesPerDay = 0.0
+    }
+
+    CalorieBudget(caloriesPerDay)
+
     LazyColumn(horizontalAlignment = Alignment.CenterHorizontally){
+
         items(Trackers){
-            SingleTracker(tracker = it,calorieRecordViewModel,startOfDay, endOfDay)
+            SingleTracker(tracker = it,calorieRecordViewModel,startOfDay, endOfDay){
+                caloriesPerDay += it
+            }
         }
     }
+//    returnCalories(caloriesPerDay)
 }
