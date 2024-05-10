@@ -53,6 +53,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.DatePickerState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -245,9 +247,18 @@ fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewMode
                   endOfDay:Long) {
     var showDialog by remember { mutableStateOf(false) }
 
+    val calorieRecordsOfDateAndMealType by
+    calorieRecordViewModel.getCalorieRecordsByDateAndMealType(startOfDay, endOfDay,tracker.name).observeAsState(emptyList())
+
+    var caloriesPerMeal by remember { mutableStateOf(0.0) }
+
+    LaunchedEffect(calorieRecordsOfDateAndMealType) {
+        caloriesPerMeal = calorieRecordsOfDateAndMealType.sumByDouble { it.calorie!! }
+    }
+
     Surface(
         Modifier
-            .padding(5.dp,20.dp)
+            .padding(5.dp, 20.dp)
             .fillMaxWidth()
             .height(60.dp)
             .clickable { showDialog = true }
@@ -274,7 +285,7 @@ fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewMode
                     color = CustomBlack,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold)
-//                Text(text = tracker.progress.toString())
+                Text(text = String.format("%.2f",caloriesPerMeal))
             }
             Row {
                 if (tracker.name=="Water")

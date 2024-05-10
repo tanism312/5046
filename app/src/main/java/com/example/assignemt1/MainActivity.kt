@@ -64,11 +64,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Assignemt1Theme {
-                AuthScreen(googleSignInClient, launcher)
-
-                if (isUserSignedIn) {
+//                AuthScreen(googleSignInClient, launcher)
+//
+//                if (isUserSignedIn) {
                     BottomNavigationBar()
-                }
+//                }
             }
         }
     }
