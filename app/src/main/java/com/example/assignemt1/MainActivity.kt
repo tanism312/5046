@@ -49,7 +49,8 @@ class MainActivity : ComponentActivity() {
 
                 if (isUserSignedIn) {
                     BottomNavigationBar()
-                }else{
+                }
+                else{
                     LogIn(googleSignInClient, launcher)
                 }
             }

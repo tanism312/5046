@@ -2,6 +2,7 @@ package com.example.assignment1
 
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,9 +26,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.assignemt1.R
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
@@ -46,18 +50,25 @@ fun LogIn(googleSignInClient: GoogleSignInClient, launcher: ActivityResultLaunch
     var isSignUp by remember { mutableStateOf(false) }
     var authMessage by remember { mutableStateOf("") }
     var showAuthMessage by remember { mutableStateOf(false) }
-    val backgroundColor = Color(0xFFAFE1AF)
     val coroutineScope = rememberCoroutineScope()
     val auth = FirebaseAuth.getInstance()
+
+    Image(
+        painter = painterResource(id = R.drawable.login),
+        contentDescription = "Background Image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxWidth()
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = backgroundColor)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
+
         if (showAuthMessage) {
             Text(
                 text = authMessage,

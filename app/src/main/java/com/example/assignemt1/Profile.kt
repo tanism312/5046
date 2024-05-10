@@ -138,7 +138,7 @@ fun Profile(navController: NavHostController) {
                     Text(text = "Daily Tip", modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 25.dp), color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "3", modifier = Modifier
+                    Text(text = "1", modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 5.dp)
                         .clickable { navController.navigate(Routes.Details.value) }, color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -158,7 +158,7 @@ fun Profile(navController: NavHostController) {
                     Text(text = "Target", modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 25.dp), color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "17", modifier = Modifier
+                    Text(text = "3", modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 5.dp)
                         .clickable { navController.navigate(Routes.Goals.value) }, color = CustomWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -367,31 +367,36 @@ fun Profile(navController: NavHostController) {
         {
             Text("Save Changes")
         }
-<<<<<<< HEAD
+
+//        Button(
+//            onClick = {
+//                // Sign out logic
+//                val auth = FirebaseAuth.getInstance()
+//                auth.signOut()
+//                // Navigate back to the login or home screen
+//                navController.navigate("MainActivity")
+//            },
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            Text("Sign Out", fontSize = 18.sp, color = Color.White)
+//        }
+
+
+
         Button(
-            onClick = {
+            onClick =  {
                 // Sign out logic
                 val auth = FirebaseAuth.getInstance()
                 auth.signOut()
                 // Navigate back to the login or home screen
-                navController.navigate("MainActivity")
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Sign Out", fontSize = 18.sp, color = Color.White)
-        }
-
-=======
-
-        Button(
-            onClick = {},
+                navController.navigate("LogIn")},
             colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = Color.Red)
         )
         {
             Text(text = "Log Out")
 
         }
->>>>>>> 7d261a42e1ca8b070b00eaf5f110375bd6a877f1
+
     }
 }
 
