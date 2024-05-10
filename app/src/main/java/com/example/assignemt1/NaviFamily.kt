@@ -1,6 +1,8 @@
 package com.example.screens
 
+import android.content.Intent
 import android.os.Build
+import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
@@ -23,29 +25,37 @@ import com.example.assignemt1.Community
 import com.example.assignemt1.CustomBlack
 import com.example.assignemt1.Dashboard
 import com.example.assignemt1.Details
-import com.example.assignemt1.Profile
-import com.example.assignemt1.Stats
 import com.example.assignemt1.FollowersList
 import com.example.assignemt1.Goals
+import com.example.assignemt1.Profile
 import com.example.assignemt1.Routes
-
+import com.example.assignemt1.Stats
+import com.example.assignment1.LogIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BottomNavigationBar() {
     val navController = rememberNavController()
+    lateinit var googleSignInClient: GoogleSignInClient
+    lateinit var launcher: ActivityResultLauncher<Intent>
+
     Scaffold(
         bottomBar = {
-            BottomNavigation (backgroundColor= Color.LightGray ){
+            BottomNavigation(backgroundColor = Color.LightGray) {
                 val navBackStackEntry by
                 navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
 
                 NavBarItem().NavBarItems().forEach { navItem ->
                     BottomNavigationItem(
-                        icon = { Icon(navItem.icon, contentDescription =
-                        null) },
-                        label = { Text(navItem.label, color = CustomBlack, fontSize = 10.sp,)},
+                        icon = {
+                            Icon(
+                                navItem.icon, contentDescription =
+                                null
+                            )
+                        },
+                        label = { Text(navItem.label, color = CustomBlack, fontSize = 10.sp,) },
                         selected = currentDestination?.hierarchy?.any {
                             it.route == navItem.route
                         } == true,
@@ -89,6 +99,9 @@ fun BottomNavigationBar() {
             }
             composable(Routes.Details.value) {
                 Details(navController)
+            }
+            composable(Routes.LogIn.value) {
+                LogIn(googleSignInClient = googleSignInClient, launcher = launcher)
             }
         }
     }

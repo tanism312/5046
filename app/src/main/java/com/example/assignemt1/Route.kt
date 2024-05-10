@@ -8,7 +8,8 @@ enum class Routes(val value: String) {
     Profile("Profile"),
     FollowersList("Followers"),
     Goals("Goals"),
-    Details("Details");
+    Details("Details"),
+    LogIn("LogIn");
 
     //Home("Home"),
     //Profile("Profile"),
