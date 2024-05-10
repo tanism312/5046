@@ -38,8 +38,12 @@ import com.example.assignemt1.data.Tracker
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,7 +73,7 @@ fun FoodInput(tracker: Tracker,
     var selectedItem by remember { mutableStateOf<Items?>(null) }
     var showDialog by remember { mutableStateOf(false) }
 
-    Column(Modifier.background(color = Color.Gray)) {
+    Column(Modifier.background(color = Color.White)) {
         TextField(
             value = food,
             onValueChange = { food = it },
@@ -81,7 +85,8 @@ fun FoodInput(tracker: Tracker,
         Text(text = "Better to have the quantity of food.")
         Text(text = "E.g. \"300g tomatoes and 0.5 kg brisket.\"")
 
-        Button(onClick = {
+        Button(modifier = Modifier.align(Alignment.CenterHorizontally),
+            onClick = {
                 viewModel.getResponse(food)
         }) {
             Text("Submit")
@@ -92,7 +97,9 @@ fun FoodInput(tracker: Tracker,
                     index,calorieRecord ->
                 CalorieRecordItem(calorieRecord = calorieRecord,
                     onDelete = {calorieRecordViewModel.deleteCalorieRecord(calorieRecord)})
-                Divider(color = Color.Magenta, thickness = 5.dp)
+                Divider(color = Color.LightGray,
+                    thickness = 1.dp,
+                    modifier = Modifier.padding(0.dp,5.dp))
             }
         }
     }
@@ -203,14 +210,14 @@ fun ServeSizeDialog(onConfirm:(Double)->Unit, onDismiss:()->Unit, item:Items) {
 
 @Composable
 fun CalorieRecordItem(calorieRecord: CalorieRecord,onDelete :()->Unit) {
-    Row{
-        Text(text = "(${calorieRecord.userInput})")
-        calorieRecord.ingredient?.let { Text(text = it) }
-        calorieRecord.calorie?.let { Text(text = it.toString()) }
-
-        IconButton(onClick = onDelete) {
+    Row(horizontalArrangement = Arrangement.SpaceAround){
+        IconButton(onClick = {} /*onDelete*/) {
             Icon(Icons.Default.Delete, contentDescription = "Delete")
         }
+
+        Text(text = "(${calorieRecord.userInput})\n")
+        calorieRecord.ingredient?.let { Text(text = it, modifier = Modifier.padding(5.dp,0.dp)) }
+        calorieRecord.calorie?.let { Text(text = String.format("%.2f",it)) }
     }
 }
 

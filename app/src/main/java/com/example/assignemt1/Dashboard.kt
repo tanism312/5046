@@ -50,6 +50,7 @@ import java.time.Instant
 import java.util.Calendar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.DatePickerState
 import androidx.compose.ui.layout.ContentScale
@@ -84,11 +85,28 @@ fun Dashboard(navHostController: NavHostController?) {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
+            Column( // Use Column for vertical arrangement
+                modifier = Modifier
+                    .fillMaxWidth()  // Make the column fill the entire screen
+                    .padding(16.dp), // Add some padding around content
+                horizontalAlignment = Alignment.CenterHorizontally, // Center content horizontally
+                verticalArrangement = Arrangement.spacedBy(16.dp) // Add spacing between boxes
+            ) { // Use a Column for vertical arrangement
+                Text(
+                    text = "Dashboard", // Your desired text
+                    modifier = Modifier.padding(16.dp),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = CustomBlack
+                )
+            }
+
             DateForStats(){ (start,end) ->
                 startOfDay = start
                 endOfDay = end
             }
 //            CalorieBudget()
+            Spacer(modifier = Modifier.height(5.dp))
 
             startOfDay?.let { endOfDay?.let { it1 -> FoodTrackers(calorieRecordViewModel, it, it1) } }
 
@@ -115,7 +133,7 @@ fun DateForStats(onDateSelected:(Pair<Long, Long>) -> Unit){
         ZoneId.systemDefault()).toLocalDate()) }
     var showDatePicker by remember { mutableStateOf(false) }
 
-
+    returnDatePair(date, datePickerState,onDateSelected)
 
     Surface (shape = RoundedCornerShape(6.dp), color = CustomBlue){
         Row (modifier = Modifier.fillMaxWidth(0.9f)){
@@ -123,7 +141,7 @@ fun DateForStats(onDateSelected:(Pair<Long, Long>) -> Unit){
                 .weight(2f)
                 .clickable {
                     date = date.minusDays(1)
-                    returnDatePair(date,datePickerState,onDateSelected)
+                    returnDatePair(date, datePickerState, onDateSelected)
 
                 })
             {
@@ -158,7 +176,7 @@ fun DateForStats(onDateSelected:(Pair<Long, Long>) -> Unit){
                 .weight(2f)
                 .clickable {
                     date = date.plusDays(1)
-                    returnDatePair(date,datePickerState,onDateSelected)
+                    returnDatePair(date, datePickerState, onDateSelected)
                 }){
                 Icon(
                     Icons.Rounded.KeyboardArrowRight,
@@ -229,7 +247,7 @@ fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewMode
 
     Surface(
         Modifier
-            .padding(5.dp)
+            .padding(5.dp,20.dp)
             .fillMaxWidth()
             .height(60.dp)
             .clickable { showDialog = true }
@@ -256,7 +274,7 @@ fun SingleTracker(tracker: Tracker,calorieRecordViewModel: CalorieRecordViewMode
                     color = CustomBlack,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold)
-                Text(text = tracker.progress.toString())
+//                Text(text = tracker.progress.toString())
             }
             Row {
                 if (tracker.name=="Water")

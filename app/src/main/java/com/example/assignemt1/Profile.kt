@@ -64,13 +64,13 @@ fun Profile(navController: NavHostController) {
         val weightIcon = painterResource(id = R.drawable.weight)
         val ageIcon = painterResource(id = R.drawable.age)
 
-
-
         Image(
         painter = painterResource(id = R.drawable.login),
         contentDescription = "Background Image",
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxWidth())
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,14 +78,28 @@ fun Profile(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-        Spacer(modifier = Modifier.height(26.dp))
+        Column( // Use Column for vertical arrangement
+            modifier = Modifier
+                .fillMaxWidth()  // Make the column fill the entire screen
+                .padding(16.dp), // Add some padding around content
+            horizontalAlignment = Alignment.CenterHorizontally, // Center content horizontally
+            verticalArrangement = Arrangement.spacedBy(16.dp) // Add spacing between boxes
+        ) { // Use a Column for vertical arrangement
+            Text(
+                text = "Dashboard", // Your desired text
+                modifier = Modifier.padding(16.dp),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = CustomBlack
+            )
+        }
         Image(
             painter = painterResource(id = R.drawable.followery),
             contentDescription = "Profile Picture",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(120.dp)
-                .height(120.dp)
+                .height(60.dp)
                 .clip(CircleShape),
         )
         Text(text = "Mr.Butch", modifier = Modifier
