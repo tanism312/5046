@@ -1,5 +1,6 @@
     package com.example.assignment1
 
+<<<<<<< HEAD
     import android.content.Intent
     import androidx.activity.result.ActivityResultLauncher
     import androidx.compose.foundation.background
@@ -32,12 +33,51 @@
     import com.google.firebase.auth.FirebaseAuth
     import kotlinx.coroutines.launch
     import kotlinx.coroutines.tasks.await
+=======
+import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
+import com.example.assignemt1.R
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+>>>>>>> f46e4478465bf26f65857264210620dc22bba87d
 
 
 
     var isUserSignedIn by mutableStateOf(false)
 
 
+<<<<<<< HEAD
     @Composable
     fun LogIn(googleSignInClient: GoogleSignInClient, launcher: ActivityResultLauncher<Intent>) {
         var email by remember { mutableStateOf(TextFieldValue()) }
@@ -68,6 +108,44 @@
                     kotlinx.coroutines.delay(3000) // Message shown for 3 seconds
                     showAuthMessage = false
                 }
+=======
+@Composable
+fun LogIn(googleSignInClient: GoogleSignInClient, launcher: ActivityResultLauncher<Intent>) {
+    var email by remember { mutableStateOf(TextFieldValue()) }
+    var password by remember { mutableStateOf(TextFieldValue()) }
+    var confirmPassword by remember { mutableStateOf(TextFieldValue()) }
+    var isSignUp by remember { mutableStateOf(false) }
+    var authMessage by remember { mutableStateOf("") }
+    var showAuthMessage by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val auth = FirebaseAuth.getInstance()
+
+    Image(
+        painter = painterResource(id = R.drawable.login),
+        contentDescription = "Background Image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxWidth()
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+
+
+        if (showAuthMessage) {
+            Text(
+                text = authMessage,
+                color = Color.Red,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            LaunchedEffect(authMessage) {
+                kotlinx.coroutines.delay(3000) // Message shown for 3 seconds
+                showAuthMessage = false
+>>>>>>> f46e4478465bf26f65857264210620dc22bba87d
             }
 
             TextField(
